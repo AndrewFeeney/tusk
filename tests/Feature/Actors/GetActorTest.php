@@ -21,7 +21,6 @@ class GetActorTest extends TestCase
         $response = $this->get("users/$user->handle");
 
         $response->assertStatus(200);
-
         $response->assertJsonFragment([
             "@context" => [
                 "https://www.w3.org/ns/activitystreams",
