@@ -15,6 +15,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'handle' => Str::slug($this->faker->name() . random_int(0, 99)),
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
