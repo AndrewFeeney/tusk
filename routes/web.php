@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('.well-known/webfinger', [\App\Http\Controllers\WellKnown\WebfingerController::class, 'index']);
+
 Route::get('users/{handle}', [\App\Http\Controllers\UserController::class, 'show']);
 
 
