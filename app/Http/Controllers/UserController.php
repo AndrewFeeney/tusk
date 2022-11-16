@@ -18,8 +18,8 @@ class UserController extends Controller
             'id' => request()->url(),
             "type" => "Person",
             "publicKey" => [
-                "id" => "http://mammut.test/users/$user->handle#main-key",
-                "owner" => "http://mammut.test/users/$user->handle",
+                "id" => url("/users/$user->handle#main-key"),
+                "owner" => url("/users/$user->handle"),
                 "publicKeyPem" => $user->publicKey,
             ]
         ]);

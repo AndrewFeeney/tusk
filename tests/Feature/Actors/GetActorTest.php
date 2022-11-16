@@ -26,11 +26,11 @@ class GetActorTest extends TestCase
                 "https://www.w3.org/ns/activitystreams",
                 "https://w3id.org/security/v1"
             ],
-            "id" => "http://mammut.test/users/$user->handle",
+            "id" => url("/users/$user->handle"),
             "type" => "Person",
             "publicKey" => [
-                "id" => "http://mammut.test/users/$user->handle#main-key",
-                "owner" => "http://mammut.test/users/$user->handle",
+                "id" => url("/users/$user->handle#main-key"),
+                "owner" => url("/users/$user->handle"),
                 "publicKeyPem" => $user->publicKey,
             ]
         ]);
