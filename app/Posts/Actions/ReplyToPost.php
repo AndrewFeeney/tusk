@@ -4,6 +4,7 @@ namespace App\Posts\Actions;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Services\RSA;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Ramsey\Uuid\Uuid;
@@ -14,17 +15,20 @@ class ReplyToPost
     {
         $newPostId = Uuid::uuid4();
         $date = Carbon::now()->toRfc1123String();
+        $actor = url("users/$user->handle");
+        $signedString = "(request-target): post /inbox\nhost: {$post->user->instance}\ndate: $date";
+        $binarySignature = app()->make(RSA::class)->sign($user->privateKey, $signedString);
+        $signature = base64_encode($binarySignature);
 
         Http::withHeaders([
             'Date' => $date,
-            // @TODO
-            // Sign request
+            'Signature' => "keyId=\"$actor\",headers=\"(request-target) host date\",signature=\"$signature\"",
         ])->post('https://' . $post->user->instance .'/inbox', [
             'body' => [
                 '@context' => 'https://www.w3.org/ns/activitystreams',
                 'id' => url("/actions/@$user->handle/create/$newPostId"),
 	            'type' => 'Create',
-                'actor' => $actor = url("users/$user->handle"),
+                'actor' => $actor,
                 'object' => [
                     'id' => url("/@$user->handle/$newPostId"),
 		            'type' => 'Note',

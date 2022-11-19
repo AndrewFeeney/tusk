@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use phpseclib3\Crypt\PublicKeyLoader;
 
 class User extends Authenticatable
 {
@@ -59,5 +60,10 @@ class User extends Authenticatable
     public function getPublicKeyAttribute()
     {
         return Storage::get("keys/users/$this->id/public.pem");
+    }
+
+    public function getPrivateKeyAttribute()
+    {
+        return PublicKeyLoader::load(Storage::get("/keys/users/$this->id/private.pem"), false);
     }
 }

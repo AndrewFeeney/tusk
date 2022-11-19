@@ -45,11 +45,19 @@ class ReplyToPostTest extends TestCase
             'body' => 'This is my reply',
         ]);
 
-        Http::assertSent(function (Request $request) {
-            return $request->hasHeader('Date', Carbon::now()->toRfc1123String());
+        Http::assertSent(function (Request $request) use ($post, $user) {
+            $date = Carbon::now()->toRfc1123String();
 
-            // @TODO
-            // Verify signature
+            $signatureHeader = $request->headers()['Signature'][0];
+            $signatureHeaderComponents = explode(',', $signatureHeader);
+            $signature = explode('"', $signatureHeaderComponents[2])[1];
+            $decodedSignature = base64_decode($signature);
+
+            $signedString = "(request-target): post /inbox\nhost: {$post->user->instance}\ndate: $date";
+
+            $signatureIsValid = $user->privateKey->getPublicKey()->verify($signedString, $decodedSignature);
+
+            return $signatureIsValid && $request->hasHeader('Date', $date);
         });
 
         Carbon::setTestNow();
