@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Domain\Actor;
+use App\Domain\Handle;
+use App\Domain\Instance;
+use App\Domain\PrivateKey;
 use App\Services\RSA;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,9 +21,9 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::created(function ($user) {
-            $privateKey = app()->make(RSA::class)->generateKey();
+            $privateKey = PrivateKey::generate();
 
-            $publicKey = $privateKey->getPublicKey();
+            $publicKey = $privateKey->publicKey();
 
             Storage::put("keys/users/$user->id/public.pem", $publicKey);
             Storage::put("keys/users/$user->id/private.pem", $privateKey);
@@ -65,5 +68,14 @@ class User extends Authenticatable
     public function getPrivateKeyAttribute()
     {
         return PublicKeyLoader::load(Storage::get("/keys/users/$this->id/private.pem"), false);
+    }
+
+    public function toActor()
+    {
+        return new Actor(
+            new Handle($this->handle),
+            new Instance($this->instance),
+            new PrivateKey($this->privateKey)
+        );
     }
 }
