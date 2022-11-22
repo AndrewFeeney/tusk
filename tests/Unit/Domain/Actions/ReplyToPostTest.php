@@ -3,12 +3,10 @@
 namespace Tests\Unit\Domain\Actions;
 
 use App\Domain\Actions\ReplyToPost;
-use App\Domain\Actor;
 use App\Domain\Handle;
-use App\Domain\Instance;
+use App\Domain\Username;
 use App\Domain\LocalActor;
 use App\Domain\LocalInstance;
-use App\Domain\Post;
 use App\Domain\PostBody;
 use App\Domain\RemoteActor;
 use App\Domain\RemoteInstance;
@@ -17,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use PHPUnit\TextUI\XmlConfiguration\PHPUnit;
 use Tests\TestCase;
 
 class ReplyToPostTest extends TestCase
@@ -27,11 +24,11 @@ class ReplyToPostTest extends TestCase
     /** @test */
     public function a_user_can_reply_to_a_post()
     {
-        $actor = new LocalActor(new LocalInstance(), new Handle('test_user_handle'));
+        $actor = new LocalActor(new Username('test_user_username'));
 
         $remoteInstance = new RemoteInstance('mastodon.social');
-        $originalPostAuthorHandle = new Handle('Gargron');
-        $originalPostAuthor = new RemoteActor($remoteInstance, $originalPostAuthorHandle);
+        $originalPostAuthorHandle = new Handle(new Username('Gargron'), $remoteInstance);
+        $originalPostAuthor = new RemoteActor($originalPostAuthorHandle);
 
         $originalPost = new RemotePost($originalPostAuthor, '100254678717223630');
 

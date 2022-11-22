@@ -15,10 +15,10 @@ class GetActorTest extends TestCase
     public function an_actor_json_ld_object_can_be_retrieved_with_a_get_request_which_accepts_json()
     {
         $user = User::factory()->create([
-            'handle' => 'test',
+            'username' => 'test',
         ]);
 
-        $response = $this->get("users/$user->handle");
+        $response = $this->get("users/$user->username");
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -26,11 +26,11 @@ class GetActorTest extends TestCase
                 "https://www.w3.org/ns/activitystreams",
                 "https://w3id.org/security/v1"
             ],
-            "id" => url("/users/$user->handle"),
+            "id" => url("/users/$user->username"),
             "type" => "Person",
             "publicKey" => [
-                "id" => url("/users/$user->handle#main-key"),
-                "owner" => url("/users/$user->handle"),
+                "id" => url("/users/$user->username#main-key"),
+                "owner" => url("/users/$user->username"),
                 "publicKeyPem" => $user->publicKey,
             ]
         ]);

@@ -29,4 +29,9 @@ class PrivateKey
     {
         return $this->privateKey->getPublicKey();
     }
+
+    public function __toString()
+    {
+        return $this->privateKey->__toString();
+    }
 }

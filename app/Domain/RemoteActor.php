@@ -7,9 +7,9 @@ class RemoteActor implements Actor
     protected Instance $instance;
     protected Handle $handle;
 
-    public function __construct(Instance $instance, Handle $handle)
+    public function __construct(Handle $handle)
     {
-        $this->instance = $instance;
+        $this->instance = $handle->instance();
         $this->handle = $handle;
     }
 

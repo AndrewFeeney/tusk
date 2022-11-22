@@ -4,15 +4,24 @@ namespace App\Domain;
 
 class Handle
 {
-    protected string $handleString;
-
-    public function __construct(string $handleString)
+    public function __construct(Username $username, Instance $instance)
     {
-        $this->handleString = $handleString;
+        $this->username = $username;
+        $this->instance = $instance;
+    }
+
+    public function instance(): Instance
+    {
+        return $this->instance;
+    }
+
+    public function username(): Username
+    {
+        return $this->username;
     }
 
     public function __toString()
     {
-        return $this->handleString;
+        return $this->username . '@' . $this->instance->url();
     }
 }

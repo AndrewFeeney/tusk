@@ -16,7 +16,7 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->firstName() . ' ' . $this->faker->lastName(),
-            'handle' => function ($attributes) {
+            'username' => function ($attributes) {
                 return Str::slug($attributes['name'] . random_int(0, 99));
             },
             'email' => $this->faker->unique()->safeEmail(),

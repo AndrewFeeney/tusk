@@ -14,7 +14,7 @@ class GetWebfingerTest extends TestCase
     public function search_for_account_by_full_username()
     {
         $user = User::factory()->create([
-            'handle' => 'alice',
+            'username' => 'alice',
         ]);
 
         $response = $this->json('get', '/.well-known/webfinger?resource=acct:alice@'.url(''));
@@ -26,7 +26,7 @@ class GetWebfingerTest extends TestCase
                 [
                     'rel' => 'self',
                     'type' => 'application/activity+json',
-                    'href' => url("users/$user->handle"),
+                    'href' => url("users/$user->username"),
                 ],
             ],
         ]);

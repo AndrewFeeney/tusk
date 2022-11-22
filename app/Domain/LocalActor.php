@@ -4,25 +4,23 @@ namespace App\Domain;
 
 class LocalActor implements Actor
 {
-    protected Handle $handle;
     protected Instance $instance;
     protected PrivateKey $privateKey;
 
-    public function __construct(Instance $instance, Handle $handle, PrivateKey $privateKey = null)
+    public function __construct(Username $username, PrivateKey $privateKey = null)
     {
-        $this->handle = $handle;
-        $this->instance = $instance;
+        $this->handle = new Handle($username, new LocalInstance());
         $this->privateKey = $privateKey ?? PrivateKey::generate();
     }
 
     public function url(): string
     {
-        return secure_url("/users/{$this->handle}");
+        return secure_url("/users/{$this->handle->username()}");
     }
 
     public function instance(): Instance
     {
-        return $this->instance;
+        return $this->handle->instance();
     }
 
     public function handle(): Handle

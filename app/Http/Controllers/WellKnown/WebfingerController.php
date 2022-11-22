@@ -11,13 +11,13 @@ class WebfingerController extends Controller
     {
         $resource = request('resource');
         $account = explode('acct:', $resource)[1];
-        $handle = explode('@', $account)[0];
+        $username = explode('@', $account)[0];
 
-        $users = User::where('handle', $handle)
+        $users = User::where('username', $username)
             ->get()
             ->map(function ($user) {
                 return [
-                    'href' => url("users/$user->handle"),
+                    'href' => url("users/$user->username"),
                     'rel' => 'self',
                     'type' => 'application/activity+json',
                 ];

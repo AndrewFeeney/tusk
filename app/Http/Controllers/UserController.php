@@ -6,9 +6,9 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function show(string $handle)
+    public function show(string $username)
     {
-        $user = User::firstWhere('handle', $handle);
+        $user = User::firstWhere('username', $username);
 
         return response()->json([
             '@context' => [
@@ -18,8 +18,8 @@ class UserController extends Controller
             'id' => request()->url(),
             "type" => "Person",
             "publicKey" => [
-                "id" => url("/users/$user->handle#main-key"),
-                "owner" => url("/users/$user->handle"),
+                "id" => url("/users/$user->username#main-key"),
+                "owner" => url("/users/$user->username"),
                 "publicKeyPem" => $user->publicKey,
             ]
         ]);
