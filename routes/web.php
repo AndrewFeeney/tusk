@@ -17,4 +17,6 @@ Route::get('.well-known/webfinger', [\App\Http\Controllers\WellKnown\WebfingerCo
 
 Route::get('users/{handle}', [\App\Http\Controllers\UserController::class, 'show']);
 
+Route::get('users/{username}/{publicId}', [\App\Http\Controllers\UserPostController::class, 'show']);
+
 

@@ -59,7 +59,7 @@ class DraftReply
 
     public function toPost(): Post
     {
-        return new Post($this->author, $this->author->instance(), $this->body, $this->publicId, $this->date);
+        return new Post($this->author, $this->body, $this->publicId, $this->date, $this->inReplyToPost);
     }
 
     private function signature()

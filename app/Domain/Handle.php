@@ -10,6 +10,13 @@ class Handle
         $this->instance = $instance;
     }
 
+    public static function fromString(string $handle): self
+    {
+        $components = explode('@', $handle);
+
+        return new self(new Username($components[0]), new RemoteInstance('https://' . $components[1]));
+    }
+
     public function instance(): Instance
     {
         return $this->instance;

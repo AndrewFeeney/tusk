@@ -5,7 +5,10 @@ namespace App\Models;
 use App\Domain\Actor;
 use App\Domain\Handle;
 use App\Domain\Instance;
+use App\Domain\LocalActor;
+use App\Domain\LocalInstance;
 use App\Domain\PrivateKey;
+use App\Domain\Username;
 use App\Services\RSA;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,7 +29,7 @@ class User extends Authenticatable
             $publicKey = $privateKey->publicKey();
 
             Storage::put("keys/users/$user->id/public.pem", $publicKey);
-            Storage::put("keys/users/$user->id/private.pem", $privateKey);
+            Storage::put("keys/users/$user->id/private.pem", (string) $privateKey);
         });
     }
 
@@ -61,6 +64,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function getPublicKeyAttribute()
     {
         return Storage::get("keys/users/$this->id/public.pem");
@@ -71,11 +79,10 @@ class User extends Authenticatable
         return PublicKeyLoader::load(Storage::get("/keys/users/$this->id/private.pem"), false);
     }
 
-    public function toActor()
+    public function toDomainObject()
     {
-        return new Actor(
-            new Handle($this->handle),
-            new Instance($this->instance),
+        return new LocalActor(
+            new Username($this->username),
             new PrivateKey($this->privateKey)
         );
     }
