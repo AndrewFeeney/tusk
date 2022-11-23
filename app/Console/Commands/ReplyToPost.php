@@ -6,8 +6,10 @@ use App\Domain\Actions\ReplyToPost as ActionsReplyToPost;
 use App\Domain\LocalActor;
 use App\Domain\Handle;
 use App\Domain\LocalInstance;
+use App\Domain\PostBody;
+use App\Domain\RemoteActor;
+use App\Domain\RemotePost;
 use App\Domain\Repliable;
-use App\Models\Post;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +22,7 @@ class ReplyToPost extends Command
      *
      * @var string
      */
-    protected $signature = 'post:reply {localUserHandle} {inReplyToPostAuthor} {inReplyToPostPublicId} {postBody}';
+    protected $signature = 'post:reply {localUserUsername} {inReplyToPostAuthor} {inReplyToPostPublicId} {postBody}';
 
     /**
      * The console command description.
@@ -61,14 +63,14 @@ class ReplyToPost extends Command
 
     private function resolveActor(): LocalActor
     {
-        $handle = new Handle($this->argument('localUserHandle'));
+        $username = $this->argument('localUserUsername');;
 
-        $user = User::firstWhere('handle', $handle);
+        $user = User::firstWhere('username', $username);
 
         if (is_null($user)) {
             $user = new User([
-                'name' => $handle,
-                'handle' => $handle,
+                'name' => $username,
+                'username' => $username,
                 'email' => '',
                 'instance' => (new LocalInstance())->url(),
             ]);
@@ -78,11 +80,21 @@ class ReplyToPost extends Command
             $user->save();
         }
 
-        return $user->toActor();
+        return $user->toDomainObject();
     }
 
     private function resolveInReplyToPost(): Repliable
     {
-        $inReplyToPostAuthor =
+        return new RemotePost($this->resolveInReplyToPostAuthor(), $this->argument('inReplyToPostPublicId'));
+    }
+
+    private function resolveInReplyToPostAuthor(): RemoteActor
+    {
+        return new RemoteActor(Handle::fromString($this->argument('inReplyToPostAuthor')));
+    }
+
+    private function resolvePostBody(): PostBody
+    {
+        return new PostBody($this->argument('postBody'));
     }
 }
