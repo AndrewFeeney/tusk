@@ -18,9 +18,7 @@ class SendReplyToFederatedInstance
                 "signature=\"{$reply->base64EncodedSignature()}\"",
             ]),
             'Digest' => $reply->digestHeader(),
-        ])->post($reply->inReplyToPost()->instance()->url() .'/inbox', [
-            'body' => $reply->toArray(),
-        ]);
+        ])->post($reply->inReplyToPost()->instance()->url() .'/inbox', $reply->toArray());
 
         if ($response->status() !== 200) {
             throw new Exception("Request failed with " . $response->status() ." status code: ".$response->body());
