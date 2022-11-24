@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\Http;
 
 class SendReplyToFederatedInstance
 {
-    public function execute(Post $draftReply)
+    public function execute(Post $reply)
     {
         $response = Http::withHeaders([
-            'Date' => $draftReply->publishedAtHeaderString(),
+            'Date' => $reply->publishedAtHeaderString(),
             'Signature' => implode(',', [
-                "keyId=\"{$draftReply->author()->url()}\"",
+                "keyId=\"{$reply->author()->url()}\"",
                 "headers=\"(request-target) host date digest\"",
-                "signature=\"{$draftReply->base64EncodedSignature()}\"",
+                "signature=\"{$reply->base64EncodedSignature()}\"",
             ]),
-            'Digest' => $draftReply->digestHeader(),
-        ])->post($draftReply->inReplyToPost()->instance()->url() .'/inbox', [
-            'body' => $draftReply->toArray(),
+            'Digest' => $reply->digestHeader(),
+        ])->post($reply->inReplyToPost()->instance()->url() .'/inbox', [
+            'body' => $reply->toArray(),
         ]);
 
         if ($response->status() !== 200) {
