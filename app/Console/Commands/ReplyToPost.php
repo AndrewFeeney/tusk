@@ -11,6 +11,7 @@ use App\Domain\PostBody;
 use App\Domain\RemoteActor;
 use App\Domain\RemotePost;
 use App\Domain\Repliable;
+use App\Models\Post as ModelsPost;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -60,12 +61,19 @@ class ReplyToPost extends Command
         $body = $this->resolvePostBody();
         $reply = new Post($actor, $body, Uuid::uuid4(), Carbon::now(), $inReplyToPost);
 
+        $savedPost = new ModelsPost([
+            'user_id' => $this->resolveUser()->id,
+            'public_id' => $reply->publicId(),
+            'body' => $body,
+        ]);
+        $savedPost->save();
+
         $this->action->execute($reply);
 
         return 0;
     }
 
-    private function resolveActor(): LocalActor
+    private function resolveUser(): User
     {
         $username = $this->argument('localUserUsername');;
 
@@ -84,7 +92,12 @@ class ReplyToPost extends Command
             $user->save();
         }
 
-        return $user->toDomainObject();
+        return $user;
+    }
+
+    private function resolveActor(): LocalActor
+    {
+        return $this->resolveUser()->toDomainObject();
     }
 
     private function resolveInReplyToPost(): Repliable

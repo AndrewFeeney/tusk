@@ -4,6 +4,7 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Domain\Actions\SendReplyToFederatedInstance;
 use App\Domain\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Mockery;
@@ -40,6 +41,11 @@ class ReplyToPostTest extends TestCase
             'inReplyToPostAuthor' => $originalPostAuthor,
             'inReplyToPostPublicId' => $originalPostPublicId,
             'postBody' => $postBody,
+        ]);
+
+        $this->assertDatabaseHas('posts', [
+            'user_id' => User::where('username', 'test_local_user')->first()->id,
+            'body' => $postBody,
         ]);
     }
 }
