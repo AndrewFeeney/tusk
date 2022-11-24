@@ -3,6 +3,7 @@
 namespace App\Domain\Actions;
 
 use App\Domain\Post;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class SendReplyToFederatedInstance
@@ -19,5 +20,9 @@ class SendReplyToFederatedInstance
         ])->post($draftReply->inReplyToPost()->instance()->url() .'/inbox', [
             'body' => $draftReply->toArray(),
         ]);
+
+        if ($response->status() !== 200) {
+            throw new Exception("Request failed with " . $response->status() ." status code: ".$response->body());
+        }
     }
 }
