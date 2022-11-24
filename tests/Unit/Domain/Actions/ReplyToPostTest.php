@@ -46,6 +46,9 @@ class ReplyToPostTest extends TestCase
         Http::assertSent(function (Request $request) use ($originalPost, $actor, $newPost) {
             $date = Carbon::parse('2022-02-02 22:22:22')->toRfc7231String();
 
+            $digestHeader = $request->headers()['Digest'][0];
+            $digestHeaderIsValid = $digestHeader === $newPost->digestHeader();
+
             $signatureHeader = $request->headers()['Signature'][0];
             $signatureHeaderComponents = explode(',', $signatureHeader);
             $signature = explode('"', $signatureHeaderComponents[2])[1];
@@ -56,7 +59,7 @@ class ReplyToPostTest extends TestCase
 
             $this->assertTrue($signatureIsValid, 'Failed asserting that the signature is valid');
 
-            return $signatureIsValid && $request->hasHeader('Date', $date);
+            return $digestHeaderIsValid && $signatureIsValid && $request->hasHeader('Date', $date);
         });
 
         Carbon::setTestNow();

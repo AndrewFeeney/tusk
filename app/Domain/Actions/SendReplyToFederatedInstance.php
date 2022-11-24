@@ -17,6 +17,7 @@ class SendReplyToFederatedInstance
                 "headers=\"(request-target) host date digest\"",
                 "signature=\"{$draftReply->base64EncodedSignature()}\"",
             ]),
+            'Digest' => $draftReply->digestHeader(),
         ])->post($draftReply->inReplyToPost()->instance()->url() .'/inbox', [
             'body' => $draftReply->toArray(),
         ]);
