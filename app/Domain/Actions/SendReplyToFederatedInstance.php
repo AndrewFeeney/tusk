@@ -13,7 +13,7 @@ class SendReplyToFederatedInstance
             'Date' => $draftReply->publishedAtHeaderString(),
             'Signature' => implode(',', [
                 "keyId=\"{$draftReply->author()->url()}\"",
-                "headers=\"(request-target) host date\"",
+                "headers=\"(request-target) host date digest\"",
                 "signature=\"{$draftReply->base64EncodedSignature()}\"",
             ]),
         ])->post($draftReply->inReplyToPost()->instance()->url() .'/inbox', [

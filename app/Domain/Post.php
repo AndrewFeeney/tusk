@@ -90,6 +90,22 @@ class Post implements Repliable
             "(request-target): post /inbox",
             "host: {$this->inReplyToPost->author()->instance()->url()}",
             "date: {$date}",
+            "digest: {$this->digestHeader()}",
         ]);
+    }
+
+    public function digestHeader()
+    {
+        return "SHA-256=".base64_encode(hash('sha256', json_encode($this->toArray())));
+    }
+
+    public function base64EncodedSignature(): string
+    {
+        return base64_encode($this->signature());
+    }
+
+    private function signature()
+    {
+        return $this->author->privateKey()->sign($this->stringToSign());
     }
 }
