@@ -18,7 +18,7 @@ class SendReplyToFederatedInstance
                 "headers=\"(request-target) host date\"",
                 "signature=\"{$draftReply->base64EncodedSignature()}\"",
             ]),
-        ])->post('https://' . $draftReply->inReplyToPost()->instance()->url() .'/inbox', [
+        ])->post($draftReply->inReplyToPost()->instance()->url() .'/inbox', [
             'body' => [
                 '@context' => 'https://www.w3.org/ns/activitystreams',
                 'id' => url("/actions/@{$draftReply->author()->handle()}/create/{$draftReply->publicId()}"),
