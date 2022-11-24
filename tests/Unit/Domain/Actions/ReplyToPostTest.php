@@ -43,7 +43,7 @@ class ReplyToPostTest extends TestCase
         $newPost = $action->execute($actor, $originalPost, new PostBody('This is my reply'));
 
         Http::assertSent(function (Request $request) use ($originalPost, $actor) {
-            $date = Carbon::now()->toRfc1123String();
+            $date = Carbon::now()->toRfc7231String();
 
             $signatureHeader = $request->headers()['Signature'][0];
             $signatureHeaderComponents = explode(',', $signatureHeader);

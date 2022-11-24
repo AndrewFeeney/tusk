@@ -9,10 +9,10 @@ class SendReplyToFederatedInstance
 {
     public function execute(DraftReply $draftReply)
     {
-        $dateRfc1123String = $draftReply->date()->toRfc1123String();
+        $dateString = $draftReply->date()->toRfc7231String();
 
         Http::withHeaders([
-            'Date' => $dateRfc1123String,
+            'Date' => $dateString,
             'Signature' => implode(',', [
                 "keyId=\"{$draftReply->author()->url()}\"",
                 "headers=\"(request-target) host date\"",
@@ -27,7 +27,7 @@ class SendReplyToFederatedInstance
                 'object' => [
                     'id' => $draftReply->url(),
 		            'type' => 'Note',
-                    'published' => $dateRfc1123String,
+                    'published' => $dateString,
                     'attributedTo' => $draftReply->author()->url(),
                     'inReplyTo' => $draftReply->inReplyToPost()->url(),
                     'content' => $draftReply->body(),

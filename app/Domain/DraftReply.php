@@ -64,7 +64,7 @@ class DraftReply
 
     private function signature()
     {
-        $signedString = "(request-target): post /inbox\nhost: {$this->inReplyToPost->instance()->url()}\ndate: {$this->date->toRfc1123String()}";
+        $signedString = "(request-target): post /inbox\nhost: {$this->inReplyToPost->instance()->url()}\ndate: {$this->date->toRfc7231String()}";
 
         return $this->author->privateKey()->sign($signedString);
     }
