@@ -102,7 +102,7 @@ class PostTest extends TestCase
 
         $post = new Post($author, $body, $publicId, $publishedAt, $originalPost);
 
-        $hash = hash('sha256', json_encode($post->toArray()));
+        $hash = hash('sha256', json_encode($post->toArray()), true);
         $encodedHash = base64_encode($hash);
 
         $this->assertEquals(

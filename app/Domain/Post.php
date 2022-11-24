@@ -96,7 +96,7 @@ class Post implements Repliable
 
     public function digestHeader()
     {
-        return "SHA-256=".base64_encode(hash('sha256', json_encode($this->toArray())));
+        return "SHA-256=".base64_encode(hash('sha256', json_encode($this->toArray()), true));
     }
 
     public function base64EncodedSignature(): string
