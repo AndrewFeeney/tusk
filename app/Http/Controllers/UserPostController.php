@@ -14,6 +14,6 @@ class UserPostController extends Controller
             ->where('public_id', $publicId)
             ->firstOrFail();
 
-        return $post->toDomainObject()->toJson();
+        return $post->toDomainObject()->toArray();
     }
 }

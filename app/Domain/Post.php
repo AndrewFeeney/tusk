@@ -61,9 +61,8 @@ class Post implements Repliable
         return $this->publishedAt->toRfc7231String();
     }
 
-    public function toJson(): array
+    public function toArray(): array
     {
-
         return [
             '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => url("/actions/@{$this->author->handle()}/create/{$this->publicId}"),

@@ -16,7 +16,7 @@ use Tests\TestCase;
 class PostTest extends TestCase
 {
     /** @test */
-    public function to_json_produces_the_expected_json_for_the_activity_pub_spec_for_a_reply()
+    public function to_array_produces_the_expected_json_ready_array_for_the_activity_pub_spec_for_a_reply()
     {
         $authorUsername = new Username('someusername');
         $author = new LocalActor($authorUsername);
@@ -34,7 +34,7 @@ class PostTest extends TestCase
 
         $post = new Post($author, $body, $publicId, $publishedAt, $originalPost);
 
-        $json = $post->toJson();
+        $json = $post->toArray();
 
         $this->assertEquals([
             '@context' => 'https://www.w3.org/ns/activitystreams',

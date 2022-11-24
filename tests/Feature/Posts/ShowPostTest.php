@@ -19,6 +19,6 @@ class ShowPostTest extends TestCase
 
         $response->assertSuccessful();
 
-        $response->assertJsonFragment($post->toDomainObject()->toJson());
+        $response->assertJsonFragment($post->toDomainObject()->toArray());
     }
 }
