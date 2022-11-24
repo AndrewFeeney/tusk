@@ -6,14 +6,17 @@ use App\Domain\Actions\ReplyToPost as ActionsReplyToPost;
 use App\Domain\LocalActor;
 use App\Domain\Handle;
 use App\Domain\LocalInstance;
+use App\Domain\Post;
 use App\Domain\PostBody;
 use App\Domain\RemoteActor;
 use App\Domain\RemotePost;
 use App\Domain\Repliable;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class ReplyToPost extends Command
 {
@@ -55,8 +58,9 @@ class ReplyToPost extends Command
         $actor = $this->resolveActor();
         $inReplyToPost = $this->resolveInReplyToPost();
         $body = $this->resolvePostBody();
+        $reply = new Post($actor, $body, Uuid::uuid4(), Carbon::now(), $inReplyToPost);
 
-        $this->action->execute($actor, $inReplyToPost, $body);
+        $this->action->execute($reply);
 
         return 0;
     }

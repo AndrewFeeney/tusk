@@ -2,11 +2,7 @@
 
 namespace App\Domain\Actions;
 
-use App\Domain\Actor;
-use App\Domain\DraftReply;
 use App\Domain\Post;
-use App\Domain\PostBody;
-use App\Domain\Repliable;
 
 class ReplyToPost
 {
@@ -17,12 +13,10 @@ class ReplyToPost
         $this->sendReplyToFederatedInstanceAction = $sendReplyToFederatedInstanceAction;
     }
 
-    public function execute(Actor $actor, Repliable $inReplyToPost, PostBody $body): Post
+    public function execute(Post $reply): Post
     {
-        $draftReply = new DraftReply($actor, $inReplyToPost, $body);
+        $this->sendReplyToFederatedInstanceAction->execute($reply);
 
-        $this->sendReplyToFederatedInstanceAction->execute($draftReply);
-
-        return $draftReply->toPost();
+        return $reply;
     }
 }

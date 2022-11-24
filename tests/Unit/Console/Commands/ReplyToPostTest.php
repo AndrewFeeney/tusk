@@ -3,7 +3,7 @@
 namespace Tests\Unit\Console\Commands;
 
 use App\Domain\Actions\SendReplyToFederatedInstance;
-use App\Domain\DraftReply;
+use App\Domain\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Mockery;
@@ -27,7 +27,7 @@ class ReplyToPostTest extends TestCase
             Mockery::mock(SendReplyToFederatedInstance::class, function (MockInterface $mock) use ($postBody, $replyUserUsername) {
                 $mock->shouldReceive('execute')
                     ->once()
-                    ->withArgs(function (DraftReply $draftReply) use ($postBody, $replyUserUsername) {
+                    ->withArgs(function (Post $draftReply) use ($postBody, $replyUserUsername) {
                         return $draftReply->inReplyToPost()->url() === 'https://phpc.social/@andrewfeeney/109335598125402344'
                             && (string) $draftReply->body() === $postBody
                             && (string) $draftReply->author()->handle()->username() === $replyUserUsername;

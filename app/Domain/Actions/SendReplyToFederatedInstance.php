@@ -2,17 +2,15 @@
 
 namespace App\Domain\Actions;
 
-use App\Domain\DraftReply;
+use App\Domain\Post;
 use Illuminate\Support\Facades\Http;
 
 class SendReplyToFederatedInstance
 {
-    public function execute(DraftReply $draftReply)
+    public function execute(Post $draftReply)
     {
-        $dateString = $draftReply->date()->toRfc7231String();
-
-        Http::withHeaders([
-            'Date' => $dateString,
+        $response = Http::withHeaders([
+            'Date' => $draftReply->publishedAtHeaderString(),
             'Signature' => implode(',', [
                 "keyId=\"{$draftReply->author()->url()}\"",
                 "headers=\"(request-target) host date\"",
@@ -27,7 +25,7 @@ class SendReplyToFederatedInstance
                 'object' => [
                     'id' => $draftReply->url(),
 		            'type' => 'Note',
-                    'published' => $dateString,
+                    'published' => $draftReply->publishedAtHeaderString(),
                     'attributedTo' => $draftReply->author()->url(),
                     'inReplyTo' => $draftReply->inReplyToPost()->url(),
                     'content' => $draftReply->body(),

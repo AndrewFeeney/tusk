@@ -7,6 +7,7 @@ use App\Domain\Handle;
 use App\Domain\Username;
 use App\Domain\LocalActor;
 use App\Domain\LocalInstance;
+use App\Domain\Post;
 use App\Domain\PostBody;
 use App\Domain\RemoteActor;
 use App\Domain\RemoteInstance;
@@ -36,14 +37,14 @@ class ReplyToPostTest extends TestCase
             'https://mastodon.social/inbox' => Http::response(['success' => true], 200),
         ]);
 
-        Carbon::setTestNow('2022-02-02 22:22:22');
-
         $action = app()->make(ReplyToPost::class);
 
-        $newPost = $action->execute($actor, $originalPost, new PostBody('This is my reply'));
+        $postBody = new PostBody('This is my reply');
+        $newPost = new Post($actor, $postBody, '1234', Carbon::parse('2022-02-02 22:22:22'), $originalPost);
+        $action->execute($newPost);
 
         Http::assertSent(function (Request $request) use ($originalPost, $actor, $newPost) {
-            $date = Carbon::now()->toRfc7231String();
+            $date = Carbon::parse('2022-02-02 22:22:22')->toRfc7231String();
 
             $signatureHeader = $request->headers()['Signature'][0];
             $signatureHeaderComponents = explode(',', $signatureHeader);
