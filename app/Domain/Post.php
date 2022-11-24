@@ -41,14 +41,28 @@ class Post implements Repliable
         return $this->publicId;
     }
 
+    public function body(): PostBody
+    {
+        return $this->body;
+    }
+
+    public function inReplyToPost(): ?Repliable
+    {
+        return $this->inReplyToPost;
+    }
+
     public function isReply(): bool
     {
         return !is_null($this->inReplyToPost);
     }
 
+    public function publishedAtHeaderString(): string
+    {
+        return $this->publishedAt->toRfc7231String();
+    }
+
     public function toJson(): array
     {
-        $dateRfc1123String = $this->publishedAt->toRfc1123String();
 
         return [
             '@context' => 'https://www.w3.org/ns/activitystreams',
@@ -59,7 +73,7 @@ class Post implements Repliable
                 [
                     'id' => $this->url(),
                     'type' => 'Note',
-                    'published' => $dateRfc1123String,
+                    'published' => $this->publishedAtHeaderString(),
                     'attributedTo' => $this->author->url(),
                     'content' => (string) $this->body,
                     'to' => 'https://www.w3.org/ns/activitystreams#Public'
