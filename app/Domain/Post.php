@@ -68,4 +68,15 @@ class Post implements Repliable
             ),
         ];
     }
+
+    public function stringToSign(): string
+    {
+        $date = $this->publishedAt->toRfc7231String();
+
+        return implode("\n", [
+            "(request-target): post /inbox",
+            "host: {$this->inReplyToPost->author()->instance()->url()}",
+            "date: {$date}",
+        ]);
+    }
 }

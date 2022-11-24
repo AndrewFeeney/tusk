@@ -42,7 +42,7 @@ class ReplyToPostTest extends TestCase
 
         $newPost = $action->execute($actor, $originalPost, new PostBody('This is my reply'));
 
-        Http::assertSent(function (Request $request) use ($originalPost, $actor) {
+        Http::assertSent(function (Request $request) use ($originalPost, $actor, $newPost) {
             $date = Carbon::now()->toRfc7231String();
 
             $signatureHeader = $request->headers()['Signature'][0];
@@ -50,8 +50,8 @@ class ReplyToPostTest extends TestCase
             $signature = explode('"', $signatureHeaderComponents[2])[1];
             $decodedSignature = base64_decode($signature);
 
-            $signedString = "(request-target): post /inbox\nhost: {$originalPost->author()->instance()->url()}\ndate: $date";
-            $signatureIsValid = $actor->privateKey()->publicKey()->verify($signedString, $decodedSignature);
+            $stringToSign = $newPost->stringToSign();
+            $signatureIsValid = $actor->privateKey()->publicKey()->verify($stringToSign, $decodedSignature);
 
             $this->assertTrue($signatureIsValid, 'Failed asserting that the signature is valid');
 
