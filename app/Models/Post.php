@@ -28,8 +28,17 @@ class Post extends Model
         return $this->toDomainObject()->url();
     }
 
+    public function replyToPost()
+    {
+        return $this->belongsTo(Post::class);
+    }
+
     public function toDomainObject()
     {
-        return new DomainPost($this->user->toDomainObject(), new PostBody($this->body), $this->public_id, $this->created_at);
+        $inReplyTo = $this->replyToPost
+            ? $this->replyToPost->toDomainObject()
+            : null;
+
+        return new DomainPost($this->user->toDomainObject(), new PostBody($this->body), $this->public_id, $this->created_at, $inReplyTo);
     }
 }
