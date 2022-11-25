@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Instance;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('instance');
+            $table->foreignIdFor(Instance::class)->nullable()->constrained();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -27,4 +27,9 @@ class RemotePost implements Repliable
     {
         return $this->author;
     }
+
+    public function publicId(): string
+    {
+        return $this->publicId;
+    }
 }

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Instance extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'url',
+    ];
 }

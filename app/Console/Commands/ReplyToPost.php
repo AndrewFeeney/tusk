@@ -11,6 +11,7 @@ use App\Domain\PostBody;
 use App\Domain\RemoteActor;
 use App\Domain\RemotePost;
 use App\Domain\Repliable;
+use App\Models\Instance;
 use App\Models\Post as ModelsPost;
 use App\Models\User;
 use Carbon\Carbon;
@@ -57,10 +58,30 @@ class ReplyToPost extends Command
     public function handle()
     {
         $actor = $this->resolveActor();
+        $inReplyToPostAuthor = $this->resolveInReplyToPostAuthor();
         $inReplyToPost = $this->resolveInReplyToPost();
         $body = $this->resolvePostBody();
         $reply = new Post($actor, $body, Uuid::uuid4(), Carbon::now(), $inReplyToPost);
 
+        $originalPostInstance = Instance::firstOrCreate([
+            'url' => $inReplyToPostAuthor->instance()->url(),
+        ]);
+
+        $originalPostAuthor = User::firstOrNew([
+            'username' => $inReplyToPostAuthor->handle()->username(),
+            'instance_id' => $originalPostInstance->id,
+        ], [
+            'name' => $inReplyToPostAuthor->handle()->username(),
+            'email' => $inReplyToPostAuthor->handle(),
+        ]);
+        $originalPostAuthor->password = Str::random(16);
+        $originalPostAuthor->save();
+
+        $originalPost = ModelsPost::firstOrCreate([
+            'user_id' => $originalPostAuthor->id,
+            'public_id' => $inReplyToPost->publicId(),
+            'body' => $body,
+        ]);
         $savedPost = new ModelsPost([
             'user_id' => $this->resolveUser()->id,
             'public_id' => $reply->publicId(),
@@ -84,7 +105,6 @@ class ReplyToPost extends Command
                 'name' => $username,
                 'username' => $username,
                 'email' => '',
-                'instance' => (new LocalInstance())->url(),
             ]);
 
             $user->password = Hash::make(Str::random(20));

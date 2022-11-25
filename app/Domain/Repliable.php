@@ -6,4 +6,5 @@ interface Repliable
 {
     public function instance(): Instance;
     public function url(): string;
+    public function publicId(): string;
 }

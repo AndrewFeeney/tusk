@@ -44,6 +44,10 @@ class ReplyToPostTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('posts', [
+            'user_id' => User::where('username', 'andrewfeeney')->first()->id,
+        ]);
+
+        $this->assertDatabaseHas('posts', [
             'user_id' => User::where('username', 'test_local_user')->first()->id,
             'body' => $postBody,
         ]);
