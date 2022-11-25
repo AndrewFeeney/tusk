@@ -18,6 +18,7 @@ class SendReplyToFederatedInstance
                 "signature=\"{$reply->base64EncodedSignature()}\"",
             ]),
             'Digest' => $reply->digestHeader(),
+            'Accept' => 'application/json',
         ])->post($reply->inReplyToPost()->instance()->url() .'/inbox', $reply->toArray());
 
         if ($response->status() !== 200) {
