@@ -50,6 +50,8 @@ class ReplyToPostTest extends TestCase
 
         $savedReplyToPost = PostModel::where('user_id', $originalAuthorModel->id)->first();
 
+        $this->assertEquals('https://phpc.social/@andrewfeeney/109335598125402344', $savedReplyToPost->toDomainObject()->url());
+
         $this->assertDatabaseHas('posts', [
             'user_id' => User::where('username', 'test_local_user')->first()->id,
             'reply_to_post_id' => $savedReplyToPost->id,

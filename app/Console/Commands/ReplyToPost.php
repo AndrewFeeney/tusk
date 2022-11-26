@@ -82,6 +82,7 @@ class ReplyToPost extends Command
             'public_id' => $inReplyToPost->publicId(),
             'body' => $body,
         ]);
+
         $savedPost = new ModelsPost([
             'user_id' => $this->resolveUser()->id,
             'public_id' => $reply->publicId(),

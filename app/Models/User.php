@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use App\Domain\Actor;
 use App\Domain\Handle;
-use App\Domain\Instance;
 use App\Domain\LocalActor;
-use App\Domain\LocalInstance;
 use App\Domain\PrivateKey;
+use App\Domain\RemoteActor;
 use App\Domain\Username;
-use App\Services\RSA;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -69,6 +66,11 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function instance()
+    {
+        return $this->belongsTo(Instance::class);
+    }
+
     public function getPublicKeyAttribute()
     {
         return Storage::get("keys/users/$this->id/public.pem");
@@ -81,9 +83,18 @@ class User extends Authenticatable
 
     public function toDomainObject()
     {
-        return new LocalActor(
-            new Username($this->username),
-            new PrivateKey($this->privateKey)
+        if (is_null($this->instance_id)) {
+            return new LocalActor(
+                new Username($this->username),
+                new PrivateKey($this->privateKey)
+            );
+        }
+
+        return new RemoteActor(
+            new Handle(
+                new Username($this->username),
+                $this->instance->toDomainObject()
+            )
         );
     }
 }
