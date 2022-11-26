@@ -4,6 +4,7 @@ namespace Tests\Unit\Console\Commands;
 
 use App\Domain\Actions\SendReplyToFederatedInstance;
 use App\Domain\Post;
+use App\Models\Post as PostModel;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -44,11 +45,14 @@ class ReplyToPostTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('posts', [
-            'user_id' => User::where('username', 'andrewfeeney')->first()->id,
+            'user_id' => ($originalAuthorModel = User::where('username', 'andrewfeeney')->first())->id,
         ]);
+
+        $savedReplyToPost = PostModel::where('user_id', $originalAuthorModel->id)->first();
 
         $this->assertDatabaseHas('posts', [
             'user_id' => User::where('username', 'test_local_user')->first()->id,
+            'reply_to_post_id' => $savedReplyToPost->id,
             'body' => $postBody,
         ]);
     }

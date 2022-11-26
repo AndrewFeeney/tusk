@@ -13,6 +13,7 @@ class Post extends Model
 
     protected $fillable = [
         'body',
+        'instance_id',
         'public_id',
         'reply_to_post_id',
         'user_id',
