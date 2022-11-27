@@ -13,7 +13,7 @@ class SendReplyToFederatedInstance
         $response = Http::withHeaders([
             'Date' => $reply->publishedAtHeaderString(),
             'Signature' => implode(',', [
-                "keyId=\"{$reply->author()->url()}\"",
+                "keyId=\"{$reply->author()->url()}#main-key\"",
                 "headers=\"(request-target) host date digest\"",
                 "signature=\"{$reply->base64EncodedSignature()}\"",
             ]),

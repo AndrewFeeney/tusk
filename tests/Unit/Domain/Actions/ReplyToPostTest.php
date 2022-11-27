@@ -50,7 +50,10 @@ class ReplyToPostTest extends TestCase
             $digestHeaderIsValid = $digestHeader === $newPost->digestHeader();
 
             $signatureHeader = $request->headers()['Signature'][0];
+
             $signatureHeaderComponents = explode(',', $signatureHeader);
+            $this->assertEquals('keyId="https://tusk.test/users/test_user_username#main-key"', $signatureHeaderComponents[0]);
+
             $signature = explode('"', $signatureHeaderComponents[2])[1];
             $decodedSignature = base64_decode($signature);
 
