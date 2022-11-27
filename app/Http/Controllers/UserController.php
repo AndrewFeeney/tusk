@@ -13,10 +13,22 @@ class UserController extends Controller
         return response()->json([
             '@context' => [
                 'https://w3id.org/security/v1',
-                'https://www.w3.org/ns/activitystreams'
+                'https://www.w3.org/ns/activitystreams',
+                [
+                    'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+                ],
             ],
             'id' => request()->url(),
-            "type" => "Person",
+            'type' => 'Person',
+            'followers' => url("/users/{$user->username}/followers"),
+            'following' => url("/users/{$user->username}/following"),
+            'inbox' => url("/users/{$user->username}/inbox"),
+            'outbox' => url("/users/{$user->username}/outbox"),
+            'manuallyApprovesFollowers' => false,
+            'name' => $user->name,
+            'preferredUsername' => $user->username,
+            'summary' => '',
+            'url' => url("/users/{$user->username}"),
             "publicKey" => [
                 "id" => url("/users/$user->username#main-key"),
                 "owner" => url("/users/$user->username"),

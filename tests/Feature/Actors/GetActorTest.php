@@ -24,10 +24,22 @@ class GetActorTest extends TestCase
         $response->assertJsonFragment([
             "@context" => [
                 "https://www.w3.org/ns/activitystreams",
-                "https://w3id.org/security/v1"
+                "https://w3id.org/security/v1",
+                [
+                    "manuallyApprovesFollowers" => "as:manuallyApprovesFollowers",
+                ],
             ],
             "id" => url("/users/$user->username"),
             "type" => "Person",
+            "following" => url("/users/$user->username/following"),
+            "followers" => url("/users/$user->username/followers"),
+            "inbox" => url("/users/$user->username/inbox"),
+            "outbox" => url("/users/$user->username/outbox"),
+            "preferredUsername" => $user->username,
+            "name" => $user->name,
+            "summary" => "",
+            "url" => url("/users/$user->username"),
+            "manuallyApprovesFollowers" => false,
             "publicKey" => [
                 "id" => url("/users/$user->username#main-key"),
                 "owner" => url("/users/$user->username"),
