@@ -72,7 +72,7 @@ class ReplyToPost extends Command
             'instance_id' => $originalPostInstance->id,
         ], [
             'name' => $inReplyToPostAuthor->handle()->username(),
-            'email' => $inReplyToPostAuthor->handle(),
+            'email' => (string) $inReplyToPostAuthor->handle(),
         ]);
         $originalPostAuthor->password = Str::random(16);
         $originalPostAuthor->save();

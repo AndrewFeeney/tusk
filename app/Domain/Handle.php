@@ -29,6 +29,6 @@ class Handle
 
     public function __toString()
     {
-        return $this->username . '@' . $this->instance->url();
+        return $this->username . '@' . str_replace('https://', '', $this->instance->url());
     }
 }

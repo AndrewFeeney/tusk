@@ -44,6 +44,11 @@ class ReplyToPostTest extends TestCase
             'postBody' => $postBody,
         ]);
 
+        $this->assertDatabaseHas('users', [
+            'username' => 'andrewfeeney',
+            'email' => 'andrewfeeney@phpc.social',
+        ]);
+
         $this->assertDatabaseHas('posts', [
             'user_id' => ($originalAuthorModel = User::where('username', 'andrewfeeney')->first())->id,
         ]);
