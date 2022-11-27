@@ -106,7 +106,7 @@ class ReplyToPost extends Command
             $user = new User([
                 'name' => $username,
                 'username' => $username,
-                'email' => '',
+                'email' => $username . '@' . str_replace('http://', '', str_replace('https://', '', url(''))),
             ]);
 
             $user->password = Hash::make(Str::random(20));
