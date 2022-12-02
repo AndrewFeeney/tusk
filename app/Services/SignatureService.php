@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
+use App\Domain\Signable;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
 class SignatureService
 {
+    public function sign(Signable $signable, string $privateKeyString, $paddingType = RSA::SIGNATURE_PSS): string
+    {
+        return $this->signStringWithPrivateKey($signable->signingString(), $privateKeyString, $paddingType);
+    }
+
     public function signStringWithPrivateKey(string $stringToBeSigned, string $privateKeyString, $paddingType = RSA::SIGNATURE_PSS): string
     {
         $privateKey = PublicKeyLoader::load($privateKeyString)
