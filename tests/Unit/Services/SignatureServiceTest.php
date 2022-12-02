@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Domain\Signable;
+use App\Domain\Signatory;
 use App\Services\SignatureService;
 use phpseclib3\Crypt\RSA;
 use Tests\TestCase;
@@ -17,23 +18,6 @@ use Tests\TestCase;
 class SignatureServiceTest extends TestCase
 {
     /** @test */
-    public function it_can_sign_a_string_with_a_private_key()
-    {
-        $plainTextString = 'date: Thu, 05 Jan 2014 21:31:40 GMT';
-
-        $testPrivateKey = file_get_contents(base_path('tests/Files/private.pem'));
-
-        $signatureService = app()->make(SignatureService::class);
-
-        $signature = $signatureService->signStringWithPrivateKey($plainTextString, $testPrivateKey, RSA::SIGNATURE_PKCS1);
-
-        $this->assertSame(
-            'jKyvPcxB4JbmYY4mByyBY7cZfNl4OW9HpFQlG7N4YcJPteKTu4MWCLyk+gIr0wDgqtLWf9NLpMAMimdfsH7FSWGfbMFSrsVTHNTk0rK3usrfFnti1dxsM4jl0kYJCKTGI/UWkqiaxwNiKqGcdlEDrTcUhhsFsOIo8VhddmZTZ8w=',
-            $signature
-        );
-    }
-
-    /** @test */
     public function it_can_verify_a_known_good_signature_for_a_given_string()
     {
         $signedString = 'date: Thu, 05 Jan 2014 21:31:40 GMT';
@@ -41,7 +25,7 @@ class SignatureServiceTest extends TestCase
         $knownGoodSignature = 'jKyvPcxB4JbmYY4mByyBY7cZfNl4OW9HpFQlG7N4YcJPteKTu4MWCLyk+gIr0wDgqtLWf9NLpMAMimdfsH7FSWGfbMFSrsVTHNTk0rK3usrfFnti1dxsM4jl0kYJCKTGI/UWkqiaxwNiKqGcdlEDrTcUhhsFsOIo8VhddmZTZ8w=';
 
         $signatureService = app()->make(SignatureService::class);
-        $signatureIsValid = $signatureService->verifySignatureWithPublicKey($knownGoodSignature, $signedString, $testPublicKey, RSA::SIGNATURE_PKCS1);
+        $signatureIsValid = $signatureService->verifySignature($knownGoodSignature, $signedString, $testPublicKey, RSA::SIGNATURE_PKCS1);
         $this->assertTrue($signatureIsValid);
     }
 
@@ -55,7 +39,19 @@ class SignatureServiceTest extends TestCase
             }
         };
 
-        $testPrivateKey = file_get_contents(base_path('tests/Files/private.pem'));
+        $testPrivateKey = new class implements Signatory {
+            public function keyId(): string {
+                return 'test';
+            }
+
+            public function keyString(): string {
+                return file_get_contents(base_path('tests/Files/private.pem'));
+            }
+
+            public function paddingType(): int {
+                return RSA::SIGNATURE_PKCS1;
+            }
+        };
 
         $signatureService = app()->make(SignatureService::class);
 
