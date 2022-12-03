@@ -4,8 +4,10 @@ namespace Tests\Unit\Services;
 
 use App\Domain\Signable;
 use App\Domain\Signatory;
+use App\Domain\VerifiableSignatory;
 use App\Services\SignatureService;
 use phpseclib3\Crypt\RSA;
+use PHPUnit\Framework\MockObject\Verifiable;
 use Tests\TestCase;
 
 /**
@@ -20,12 +22,33 @@ class SignatureServiceTest extends TestCase
     /** @test */
     public function it_can_verify_a_known_good_signature_for_a_given_string()
     {
+        $testSignable = new class implements Signable {
+            public function signingString(): string
+            {
+                return 'date: Thu, 05 Jan 2014 21:31:40 GMT';
+            }
+        };
+
+        $testVerifiableSignatory = new class implements VerifiableSignatory {
+            public function keyId(): string {
+                return 'test';
+            }
+
+            public function publickeyString(): string {
+                return file_get_contents(base_path('tests/Files/public.pem'));
+            }
+
+            public function paddingType(): int {
+                return RSA::SIGNATURE_PKCS1;
+            }
+        };
+
         $signedString = 'date: Thu, 05 Jan 2014 21:31:40 GMT';
         $testPublicKey = file_get_contents(base_path('tests/Files/public.pem'));
         $knownGoodSignature = 'jKyvPcxB4JbmYY4mByyBY7cZfNl4OW9HpFQlG7N4YcJPteKTu4MWCLyk+gIr0wDgqtLWf9NLpMAMimdfsH7FSWGfbMFSrsVTHNTk0rK3usrfFnti1dxsM4jl0kYJCKTGI/UWkqiaxwNiKqGcdlEDrTcUhhsFsOIo8VhddmZTZ8w=';
 
         $signatureService = app()->make(SignatureService::class);
-        $signatureIsValid = $signatureService->verifySignature($knownGoodSignature, $signedString, $testPublicKey, RSA::SIGNATURE_PKCS1);
+        $signatureIsValid = $signatureService->verifySignature($knownGoodSignature, $signedString, $testVerifiableSignatory);
         $this->assertTrue($signatureIsValid);
     }
 

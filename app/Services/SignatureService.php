@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Domain\Signable;
 use App\Domain\Signatory;
+use App\Domain\VerifiableSignatory;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 
@@ -14,10 +15,10 @@ class SignatureService
         return $this->signStringWithPrivateKey($signable->signingString(), $signatory->keyString(), $signatory->paddingType());
     }
 
-    public function verifySignature(string $signature, string $unsignedString, string $publicKeyString, $paddingType = RSA::SIGNATURE_PSS): bool
+    public function verifySignature(string $signature, string $unsignedString, VerifiableSignatory $signatory): bool
     {
-        $publicKey = PublicKeyLoader::load($publicKeyString)
-            ->withPadding($paddingType);
+        $publicKey = PublicKeyLoader::load($signatory->publicKeyString())
+            ->withPadding($signatory->paddingType());
 
         $decodedSignature = base64_decode($signature, true);
 
