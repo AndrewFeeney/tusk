@@ -17,8 +17,10 @@ class SignatureService
 
     public function verifySignature(string $signature, string $unsignedString, VerifiableSignatory $signatory): bool
     {
-        $publicKey = PublicKeyLoader::load($signatory->publicKeyString())
-            ->withPadding($signatory->paddingType());
+        /** @var phpseclib3\Crypt\RSA\PublicKey */
+        $publicKey = PublicKeyLoader::load($signatory->publicKeyString());
+
+        $publicKey = $publicKey->withPadding($signatory->paddingType());
 
         $decodedSignature = base64_decode($signature, true);
 
@@ -29,8 +31,10 @@ class SignatureService
 
     private function signStringWithPrivateKey(string $stringToBeSigned, string $privateKeyString, $paddingType = RSA::SIGNATURE_PSS): string
     {
-        $privateKey = PublicKeyLoader::load($privateKeyString)
-            ->withPadding($paddingType);
+        /** @var phpseclib3\Crypt\RSA\PrivateKey */
+        $privateKey = PublicKeyLoader::load($privateKeyString);
+
+        $privateKey = $privateKey->withPadding($paddingType);
 
         return base64_encode($privateKey->sign($stringToBeSigned));
     }
