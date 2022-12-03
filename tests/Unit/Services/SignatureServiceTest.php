@@ -7,7 +7,6 @@ use App\Domain\Signatory;
 use App\Domain\VerifiableSignatory;
 use App\Services\SignatureService;
 use phpseclib3\Crypt\RSA;
-use PHPUnit\Framework\MockObject\Verifiable;
 use Tests\TestCase;
 
 /**
@@ -43,12 +42,10 @@ class SignatureServiceTest extends TestCase
             }
         };
 
-        $signedString = 'date: Thu, 05 Jan 2014 21:31:40 GMT';
-        $testPublicKey = file_get_contents(base_path('tests/Files/public.pem'));
         $knownGoodSignature = 'jKyvPcxB4JbmYY4mByyBY7cZfNl4OW9HpFQlG7N4YcJPteKTu4MWCLyk+gIr0wDgqtLWf9NLpMAMimdfsH7FSWGfbMFSrsVTHNTk0rK3usrfFnti1dxsM4jl0kYJCKTGI/UWkqiaxwNiKqGcdlEDrTcUhhsFsOIo8VhddmZTZ8w=';
 
         $signatureService = app()->make(SignatureService::class);
-        $signatureIsValid = $signatureService->verifySignature($knownGoodSignature, $signedString, $testVerifiableSignatory);
+        $signatureIsValid = $signatureService->verifySignature($knownGoodSignature, $testSignable->signingString(), $testVerifiableSignatory);
         $this->assertTrue($signatureIsValid);
     }
 
