@@ -14,7 +14,7 @@ class SignatureService
         return $this->signStringWithPrivateKey($signable->signingString(), $signatory->keyString(), $signatory->paddingType());
     }
 
-    public function verifySignatureWithPublicKey(string $signature, string $unsignedString, string $publicKeyString, $paddingType = RSA::SIGNATURE_PSS): bool
+    public function verifySignature(string $signature, string $unsignedString, string $publicKeyString, $paddingType = RSA::SIGNATURE_PSS): bool
     {
         $publicKey = PublicKeyLoader::load($publicKeyString)
             ->withPadding($paddingType);
