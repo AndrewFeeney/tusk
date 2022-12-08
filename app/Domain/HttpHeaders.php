@@ -17,5 +17,10 @@ class HttpHeaders
     {
         return $this->headers->first(fn(HttpHeader $header) => $header->keyIs($key));
     }
+
+    public function __call($name, $arguments)
+    {
+        return $this->headers->$name(...$arguments);
+    }
 }
 

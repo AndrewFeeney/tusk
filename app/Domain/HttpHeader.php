@@ -13,6 +13,11 @@ class HttpHeader
         $this->value = $value;
     }
 
+    public function key(): string
+    {
+        return $this->key;
+    }
+
     public function keyIs(string $key)
     {
         return $this->key === strtolower($key);

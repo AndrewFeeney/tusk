@@ -15,13 +15,17 @@ class Request implements Signable
         $this->headers = $headers;
     }
 
-    public function headers(): array
+    public function headers(): HttpHeaders
     {
         return $this->headers;
     }
 
-    public function signingString(array $headersToSign = ['date']): string
+    public function signingString(array $headersToSign = null): string
     {
+        if (is_null($headersToSign)) {
+            $headersToSign = ['(request-target)', ...$this->headers->map(fn ($header) => strtolower($header->key()))->toArray()];
+        }
+
         return collect($headersToSign)->map(function ($key) {
             $value = $key === '(request-target)'
                 ? strtolower($this->httpMethod) . " $this->uri"
