@@ -20,8 +20,14 @@ class Request implements Signable
         return $this->headers;
     }
 
-    public function signingString(): string
+    public function signingString(array $headersToSign = ['date']): string
     {
-        return 'date: '.$this->headers->firstWithKey('Date')->value();
+        return collect($headersToSign)->map(function ($key) {
+            $value = $key === '(request-target)'
+                ? strtolower($this->httpMethod) . " $this->uri"
+                : $this->headers->firstWithKey($key)->value();
+
+            return "$key: {$value}";
+        })->join(PHP_EOL);
     }
 }
