@@ -20,11 +20,18 @@ class Request implements Signable
         return $this->headers;
     }
 
-    public function signingString(array $headersToSign = null): string
+    public function headersToSign(array $headersToSign = null): array
     {
         if (is_null($headersToSign)) {
             $headersToSign = ['(request-target)', ...$this->headers->map(fn ($header) => strtolower($header->key()))->toArray()];
         }
+
+        return $headersToSign;
+    }
+
+    public function signingString(array $headersToSign = null): string
+    {
+        $headersToSign = $this->headersToSign($headersToSign);
 
         return collect($headersToSign)->map(function ($key) {
             $value = $key === '(request-target)'
