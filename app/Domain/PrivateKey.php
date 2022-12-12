@@ -29,7 +29,7 @@ class PrivateKey implements Signatory
 
     public function paddingType(): int
     {
-        return RSA::SIGNATURE_PSS;
+        return RSA::SIGNATURE_PKCS1;
     }
 
     public function sign(string $message)
