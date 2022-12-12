@@ -45,7 +45,7 @@ class PostTest extends TestCase
             'object' => [
                 'id' => $post->url(),
                 'type' => 'Note',
-                'published' => $post->publishedAtHeaderString(),
+                'published' => $post->publishedAt()->toIso8601ZuluString(),
                 'attributedTo' => $author->url(),
                 'content' => (string) $post->body(),
                 'to' => 'https://www.w3.org/ns/activitystreams#Public',

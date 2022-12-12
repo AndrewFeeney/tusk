@@ -56,6 +56,11 @@ class Post implements Repliable
         return !is_null($this->inReplyToPost);
     }
 
+    public function publishedAt(): Carbon
+    {
+        return $this->publishedAt;
+    }
+
     public function publishedAtHeaderString(): string
     {
         return $this->publishedAt->toRfc7231String();
@@ -72,7 +77,7 @@ class Post implements Repliable
                 [
                     'id' => $this->url(),
                     'type' => 'Note',
-                    'published' => $this->publishedAtHeaderString(),
+                    'published' => $this->publishedAt->toIso8601ZuluString(),
                     'attributedTo' => $this->author->url(),
                     'content' => (string) $this->body,
                     'to' => 'https://www.w3.org/ns/activitystreams#Public'
