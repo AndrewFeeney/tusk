@@ -25,6 +25,7 @@ class SignatureServiceTest extends TestCase
     public function it_can_sign_a_request_and_add_a_signature_header()
     {
         $method = 'POST';
+        $host = 'https://example.com';
         $uri = '/foo?param=value&pet=dog';
         $headers = new HttpHeaders([
             new HttpHeader('Host', 'example.com'),
@@ -34,7 +35,7 @@ class SignatureServiceTest extends TestCase
             new HttpHeader('Content-Length', '18'),
         ]);
 
-        $request = new Request($method, $uri, $headers);
+        $request = new Request($method, $host.$uri, $headers);
 
         $testPrivateKey = new class implements Signatory {
             public function keyId(): string {

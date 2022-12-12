@@ -22,7 +22,6 @@ class SendReplyToFederatedInstance
     public function execute(Post $reply)
     {
         $headers = new HttpHeaders([
-            new HttpHeader('Host', $reply->inReplyToPost()->instance()->url()),
             new HttpHeader('Date', $reply->publishedAtHeaderString()),
             new HttpHeader('Accept', 'application/json'),
             new HttpHeader('Content-Type', 'application/json'),
@@ -30,7 +29,12 @@ class SendReplyToFederatedInstance
             new HttpHeader('Content-Length', strlen(json_encode($reply->toArray()))),
         ]);
 
-        $request = new Request('post', '/inbox', $headers, $reply->toArray());
+        $request = new Request(
+            'post',
+            $reply->inReplyToPost()->instance()->url() .'/inbox',
+            $headers,
+            $reply->toArray()
+        );
 
         $signedRequest = app()->make(SignatureService::class)->signRequest($request, $reply->author()->privateKey());
 

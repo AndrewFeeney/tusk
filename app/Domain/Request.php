@@ -4,22 +4,34 @@ namespace App\Domain;
 
 class Request implements Signable
 {
-    protected string $httpMethod;
-    protected string $uri;
     protected HttpHeaders $headers;
     protected array $body;
+    protected string $httpMethod;
+    protected string $url;
 
-    public function __construct(string $httpMethod, string $uri, HttpHeaders $headers, array $body = [])
+    public function __construct(string $httpMethod, string $url, HttpHeaders $headers, array $body = [])
     {
         $this->httpMethod = $httpMethod;
-        $this->uri = $uri;
+        $this->url = $url;
         $this->headers = $headers;
         $this->body = $body;
     }
 
     public function url()
     {
-        return $this->headers->firstWithKey('Host')->value() . $this->uri;
+        return $this->url;
+    }
+
+    public function host()
+    {
+        return parse_url($this->url, PHP_URL_HOST);
+    }
+
+    public function uri()
+    {
+        $query = parse_url($this->url, PHP_URL_QUERY);
+
+        return parse_url($this->url, PHP_URL_PATH) . ($query ? "?$query" : "");
     }
 
     public function httpMethod(): string
@@ -46,11 +58,11 @@ class Request implements Signable
         $headersToSign = $this->headersToSign($headersToSign);
 
         return collect($headersToSign)->map(function ($key) {
-            $value = $key === '(request-target)'
-                ? strtolower($this->httpMethod) . " $this->uri"
-                : $this->headers->firstWithKey($key)->value();
-
-            return "$key: {$value}";
+            switch ($key) {
+                case '(request-target)': return "$key: ".strtolower($this->httpMethod) . ' ' . $this->uri();
+                case 'host': return "$key: ".$this->host();
+                default: return "$key: ".$this->headers->firstWithKey($key)->value();
+            }
         })->join(PHP_EOL);
     }
 
