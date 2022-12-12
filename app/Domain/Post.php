@@ -65,7 +65,7 @@ class Post implements Repliable
     {
         return [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'id' => url("/actions/@{$this->author->handle()}/create/{$this->publicId}"),
+            'id' => url("/actions/@{$this->author->handle()->username()}/create/{$this->publicId}"),
             'type' => 'Create',
             'actor' => $this->author()->url(),
             'object' => array_merge(

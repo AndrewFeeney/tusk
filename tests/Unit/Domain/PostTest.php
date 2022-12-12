@@ -39,7 +39,7 @@ class PostTest extends TestCase
 
         $this->assertEquals([
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'id' => url("/actions/@{$author->handle()}/create/{$publicId}"),
+            'id' => url("/actions/@{$author->handle()->username()}/create/{$publicId}"),
             'type' => 'Create',
             'actor' => $author->url(),
             'object' => [
