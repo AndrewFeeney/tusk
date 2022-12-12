@@ -10,7 +10,7 @@ class LocalActor implements Actor
     public function __construct(Username $username, PrivateKey $privateKey = null)
     {
         $this->handle = new Handle($username, new LocalInstance());
-        $this->privateKey = $privateKey ?? PrivateKey::generate();
+        $this->privateKey = $privateKey ?? PrivateKey::generate($this->url().'#main-key');
     }
 
     public function url(): string

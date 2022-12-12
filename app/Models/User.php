@@ -21,7 +21,7 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::created(function ($user) {
-            $privateKey = PrivateKey::generate();
+            $privateKey = PrivateKey::generate($user->keyId);
 
             $publicKey = $privateKey->publicKey();
 
@@ -76,6 +76,16 @@ class User extends Authenticatable
         return Storage::get("keys/users/$this->id/public.pem");
     }
 
+    public function getUrlAttribute()
+    {
+        return secure_url("users/$this->username");
+    }
+
+    public function getKeyIdAttribute()
+    {
+        return "{$this->url}#main-key";
+    }
+
     public function getPrivateKeyAttribute()
     {
         return PublicKeyLoader::load(Storage::get("/keys/users/$this->id/private.pem"), false);
@@ -86,7 +96,7 @@ class User extends Authenticatable
         if (is_null($this->instance_id)) {
             return new LocalActor(
                 new Username($this->username),
-                new PrivateKey($this->privateKey)
+                new PrivateKey($this->privateKey, $this->keyId)
             );
         }
 

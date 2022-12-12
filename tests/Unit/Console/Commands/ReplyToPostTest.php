@@ -46,7 +46,7 @@ class ReplyToPostTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'username' => 'test_local_user',
-            'email' => 'test_local_user@tusk.test',
+            'email' => 'test_local_user@localhost',
         ]);
         $this->assertDatabaseHas('users', [
             'username' => 'andrewfeeney',

@@ -7,12 +7,24 @@ class Request implements Signable
     protected string $httpMethod;
     protected string $uri;
     protected HttpHeaders $headers;
+    protected array $body;
 
-    public function __construct(string $httpMethod, string $uri, HttpHeaders $headers)
+    public function __construct(string $httpMethod, string $uri, HttpHeaders $headers, array $body = [])
     {
         $this->httpMethod = $httpMethod;
         $this->uri = $uri;
         $this->headers = $headers;
+        $this->body = $body;
+    }
+
+    public function url()
+    {
+        return $this->headers->firstWithKey('Host')->value() . $this->uri;
+    }
+
+    public function httpMethod(): string
+    {
+        return $this->httpMethod;
     }
 
     public function headers(): HttpHeaders
@@ -40,5 +52,10 @@ class Request implements Signable
 
             return "$key: {$value}";
         })->join(PHP_EOL);
+    }
+
+    public function body(): array
+    {
+        return $this->body;
     }
 }

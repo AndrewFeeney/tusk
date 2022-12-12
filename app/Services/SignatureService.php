@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Domain\Actor;
 use App\Domain\HttpHeader;
 use App\Domain\Request;
 use App\Domain\Signable;
